@@ -1,0 +1,6 @@
+BRASIL QUIZ BÍBLICO - BACKEND CORRIGIDO
+
+Arquivo principal: server.js
+
+Substitua o server.js do backend por este arquivo e faça o deploy no Render.
+As chaves secretas devem continuar nas Environment Variables do Render.

@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+
+    match /profiles/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly(['uid','name','email','photo','updatedAt']);
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name','email','photo','updatedAt']);
+      allow delete: if false;
+    }
+
+    match /ranking/{uid} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /rooms/{code} {
+      allow read, write: if signedIn();
+    }
+
+    match /orders/{orderId} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+
+    match /adminActions/{actionId} {
+      allow read, write: if false;
+    }
+  }
+}
